@@ -9,12 +9,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "error.h"
-
-typedef struct      label_s {
-    char *          name;
-    unsigned int    offset;
-    struct label_s *next;
-}                   label_t;
+#include "label.h"
 
 typedef struct      block_s {
     //TODO add some fields

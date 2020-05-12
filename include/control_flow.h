@@ -5,9 +5,24 @@
 #ifndef KENT_CONTROL_FLOW_CONTROL_FLOW_H
 #define KENT_CONTROL_FLOW_CONTROL_FLOW_H
 
+#include <unistd.h>
+#include <stdlib.h>
+#include <string.h>
+#include "error.h"
+
+typedef struct      label_s {
+    char *          name;
+    unsigned int    offset;
+    struct label_s *next;
+}                   label_t;
+
 typedef struct      block_s {
     //TODO add some fields
-    struct block_s *next;
+    unsigned int    offset_counter;
+    unsigned int    counter;
+    label_t *       labels;
+    // For now, only manage one block (PoC) linked list will be done later
+    //struct block_s *next;
 }                   block_t;
 
 typedef struct      link_s {
@@ -25,4 +40,8 @@ typedef struct      program_s {
     link_t *        links;
 
 }               program_t;
+
+int parser(program_t *program);
+int manage_new_block(program_t *program);
+
 #endif //KENT_CONTROL_FLOW_CONTROL_FLOW_H

@@ -8,7 +8,7 @@ void dotlink_print(dotlink_t *links) {
 	if (links == NULL)
 		LOG("Empty dotlinks\n");
 	for (dotlink_t *iterator = links; iterator != NULL; iterator = iterator->next) {
-		LOG("Dotlink offset %d and size %d\n", iterator->offset, iterator->size);
+		LOG("Dotlink between %p and %p\n", iterator->src, iterator->dest);
 	}
 }
 

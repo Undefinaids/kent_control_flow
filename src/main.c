@@ -18,10 +18,13 @@ program_t *init_program(const char *pathname) {
         return (NULL);
     }
     program->instructions = read_and_format_file(pathname);
-    if (program->instructions == NULL) {
+    if (program->instructions == NULL)
         return (NULL);
-    }
     program->counter = 0;
+    //Direct graph (option will be add later);
+    program->graph = dotgraph_init(0);
+    if (program->graph == NULL)
+    	return (NULL);
     return (program);
 }
 
@@ -34,5 +37,6 @@ int main(int argc, char **argv) {
         return (-1);
     }
     parser(program);
+    dump_dot(program, "test.dot");
     return (0);
 }

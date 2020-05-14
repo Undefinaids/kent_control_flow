@@ -28,6 +28,7 @@ static char *read_file(const char *path) {
     }
     for (int i = sb.st_size - 1; i >= 0 && buf[i] == '\n'; --i)
         buf[i] = '\0';
+    close(fd);
     return (buf);
 }
 

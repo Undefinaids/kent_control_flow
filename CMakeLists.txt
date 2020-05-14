@@ -5,4 +5,4 @@ set(CMAKE_C_STANDARD 99)
 
 include_directories(./include)
 
-add_executable(kent_control_flow src/main.c src/read_file.c src/dot/dot_dump.c src/parser.c src/block_controller.c src/label.c include/label.h)
+add_executable(kent_control_flow src/main.c src/read_file.c src/dot/dot_dump.c src/parser.c src/block_controller.c src/label.c include/label.h src/dot/dot_graph.c include/dot_graph.h src/dot/dot_block.c src/dot/dot_link.c)

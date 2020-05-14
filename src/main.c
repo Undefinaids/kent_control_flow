@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include "dot_graph.h"
 #include "control_flow.h"
 #include "file.h"
 
@@ -33,6 +34,5 @@ int main(int argc, char **argv) {
         return (-1);
     }
     parser(program);
-
-    return 0;
+    return (0);
 }

@@ -1,44 +1,62 @@
 //
-// Created by antoine on 08/05/2020.
+// Created by antoine on 19/05/2020.
 //
 
-#ifndef KENT_CONTROL_FLOW_CONTROL_FLOW_H
-#define KENT_CONTROL_FLOW_CONTROL_FLOW_H
+#ifndef NEW_CONTROL_FLOW_CONTROL_FLOW_H
+#define NEW_CONTROL_FLOW_CONTROL_FLOW_H
 
-#include <unistd.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+
 #include "error.h"
-#include "label.h"
-#include "dot_graph.h"
+
+typedef struct          subblock_s {
+	unsigned int        offset;
+	unsigned int        size;
+	unsigned int        counter;
+	struct subblock_s   *parent;
+	struct subblock_s   *next;
+	struct subblock_s   *conditional;
+}                       subblock_t;
+
+typedef struct      label_s {
+	const char      *name;
+	unsigned int    offset;
+	struct label_s  *next;
+}                   label_t;
 
 typedef struct      block_s {
-	//TODO add some fields
-	unsigned int    offset_counter;
+	unsigned int    offset;
+	unsigned int    size;
 	unsigned int    counter;
-	label_t *       labels;
-	// For now, only manage one block (PoC) linked list will be done later
-	//struct block_s *next;
+	label_t         *labels;
+	subblock_t      *subblocks;
+	struct block_s  *next;
 }                   block_t;
 
-typedef struct      link_s {
-	//TODO add some fields
-	//ADD enum to know if it is a conditional link or not
-	struct link_t *next;
-}                   link_t;
-
-// Manage global registers outside the blocks (allow to make a snapshot of them in order to save/load them)
-
 typedef struct      program_s {
-    const char **   instructions;
-    unsigned int    counter;
-    dotgraph_t *    graph;
-	block_t *       blocks;
-	link_t *        links;
-}               program_t;
+	char            **instructions;
+	unsigned int    counter;
+	block_t         *blocks;
+}                   program_t;
 
+// Subblocks function
+subblock_t *init_subblock(unsigned int offset);
+
+// Labels function
+label_t *init_label(const char *name, unsigned int offset);
+label_t *push_label(label_t **labels, const char *name, unsigned int offset);
+unsigned int get_offset_by_label_name(label_t *label, const char *name);
+
+// Blocks function
+block_t *init_block(unsigned int offset);
+block_t *push_block(block_t **blocks, unsigned int offset);
+int count_block(block_t *start);
+unsigned int extract_labels_block(program_t *program, block_t *block);
+
+// Main functions
 int parser(program_t *program);
-int manage_new_block(program_t *program);
-void dump_dot(program_t *program, const char *pathname);
+subblock_t *parse_subblocks(program_t *program, block_t *block, unsigned int offset, unsigned int limit);
 
-#endif //KENT_CONTROL_FLOW_CONTROL_FLOW_H
+#endif //NEW_CONTROL_FLOW_CONTROL_FLOW_H

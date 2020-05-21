@@ -1,42 +1,56 @@
 //
-// Created by antoine on 08/05/2020.
+// Created by antoine on 19/05/2020.
 //
 
-#include <control_flow.h>
+#include "control_flow.h"
+#include "pattern.h"
 
-char *epur_instruction(const char *instruction) {
-    char *epur;
-    size_t size_epured = 0;
+int parse_blocks(program_t *program) {
+	int i = 0;
+	block_t *previous_block = NULL;
 
-    for (int i = 0; instruction[i] != '\0'; ++i)
-        if (instruction[i] == ' ' && instruction[i + 1] == '(')
-            for (; instruction[i] != '\0' && instruction[i] != ')'; ++i);
-        else
-            ++size_epured;
-    if ((epur = calloc(sizeof(char), size_epured + 1)) == NULL) {
-        ERROR("Failed to malloc clean instruction");
-        return (NULL);
-    }
-    for (int i = 0, j = 0; instruction[i] != '\0'; ++i)
-        if (instruction[i] == ' ' && instruction[i + 1] == '(')
-            for (; instruction[i] != '\0' && instruction[i] != ')'; ++i);
-        else {
-            epur[j] = instruction[i];
-            j++;
-        }
-    return (epur);
+	for (i = 0; program->instructions[i] != NULL; ++i) {
+		 if (strncmp(program->instructions[i], "translation block start", 23) == 0) {
+		 	//New block detected
+		 	if (previous_block != NULL)
+		 		previous_block->size = i - previous_block->offset;
+		 	previous_block = push_block(&program->blocks, i);
+		 }
+	}
+	if (previous_block != NULL)
+		previous_block->size = i - previous_block->offset;
+	return (count_block(program->blocks));
+}
+
+subblock_t *parse_subblocks(program_t *program, block_t *block, unsigned int offset, unsigned int limit) {
+	subblock_t *subblock = init_subblock(offset);
+	unsigned int i = 0;
+
+	// MAYBE REMOVE SUBBLOCK PARENT ?
+	for (i = subblock->offset; program->instructions[i] != NULL && i < limit; ++i) {
+		LOG("%d | %s\n", offset, program->instructions[i]);
+		for (unsigned int j = 0; j < NB_PATTERN; ++j) {
+			if (strncmp(program->instructions[i], patterns[j].label, strlen(patterns[j].label)) == 0) {
+				subblock->size = i - subblock->offset;
+				//LOG("i in subblock loop %d\n", i);
+				return (patterns[j].action(program, block, subblock));
+			}
+		}
+	}
+	subblock->size = i - subblock->offset;
+	return (subblock);
 }
 
 int parser(program_t *program) {
-    for (; program->instructions[program->counter] != NULL; program->counter++) {
-        if (strncmp(program->instructions[program->counter], "translation block start", 23) == 0) {
-            LOG("New block\n");
-            manage_new_block(program);
-            //TODO Remove the return when we will handle multiple blocks
-            return 0;
-        }
-    }
-    return (0);
+	if (parse_blocks(program) == 0) {
+		LOG("No block found in instructions\n");
+		return (0);
+	}
+	for (block_t *block = program->blocks; block != NULL; block = block->next) {
+		LOG("Block offset %d and block size %d\n",block->offset, block->size);
+		extract_labels_block(program, block);
+		block->subblocks = parse_subblocks(program, block, block->offset, block->offset + block->size);
+	}
+	return (0);
 }
 
-// TODO: Handle var and registers calculation in order to allow jump to dynamic address ? (handle/enable memory dumping)

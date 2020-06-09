@@ -2,4 +2,4 @@
 
 Future improvements:
 Handle infinite loop
-Merge already visited subblocks
+and Merge already visited subblocks

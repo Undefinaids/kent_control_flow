@@ -10,6 +10,9 @@
 #include <string.h>
 
 #include "error.h"
+#include "old_path.h"
+
+typedef struct old_path_s old_path_t;
 
 typedef struct          subblock_s {
 	unsigned int        offset;
@@ -32,6 +35,7 @@ typedef struct      block_s {
 	unsigned int    counter;
 	label_t         *labels;
 	subblock_t      *subblocks;
+	old_path_t      *old_paths;
 	struct block_s  *next;
 }                   block_t;
 
@@ -58,5 +62,6 @@ unsigned int extract_labels_block(program_t *program, block_t *block);
 // Main functions
 int parser(program_t *program);
 subblock_t *parse_subblocks(program_t *program, block_t *block, unsigned int offset, unsigned int limit);
+void optimize_tree(block_t *block, subblock_t *entry);
 
 #endif //NEW_CONTROL_FLOW_CONTROL_FLOW_H

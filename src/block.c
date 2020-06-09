@@ -17,6 +17,7 @@ block_t *init_block(unsigned int offset) {
 	block->counter = 0;
 	block->labels = NULL;
 	block->subblocks = NULL;
+	block->old_paths = NULL;
 	block->next = NULL;
 	return (block);
 }

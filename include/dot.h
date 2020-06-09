@@ -19,6 +19,12 @@ typedef enum {
 	O_UNCONDITIONAL = 1 << 2
 }	mode_link_t;
 
+typedef struct              old_dot_block_s {
+	char                    *id;
+	subblock_t              *subblock;
+	struct old_dot_block_s  *next;
+}                           old_dot_block_t;
+
 typedef struct          dot_link_s {
 	const char          *src;
 	const char          *dest;
@@ -31,5 +37,7 @@ void print_graph_blocks(FILE *file, program_t *program, dot_link_t **links);
 void dump_models(program_t *program, const char *pathname, mode_graph_t mode);
 dot_link_t *push_link(dot_link_t **links, const char *src, const char *dest, mode_link_t mode);
 void print_graph_links(FILE *file, dot_link_t *links);
+char *has_been_printed(old_dot_block_t *paths, subblock_t *subblock);
+old_dot_block_t *push_old_dot_block(old_dot_block_t **dot_blocks, char *id, subblock_t *subblock);
 
 #endif //NEW_CONTROL_FLOW_DOT_H

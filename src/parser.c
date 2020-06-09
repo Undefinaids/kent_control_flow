@@ -24,6 +24,7 @@ int parse_blocks(program_t *program) {
 
 subblock_t *parse_subblocks(program_t *program, block_t *block, unsigned int offset, unsigned int limit) {
 	subblock_t *subblock = init_subblock(offset);
+	subblock_t *result;
 	unsigned int i = 0;
 
 	// MAYBE REMOVE SUBBLOCK PARENT ?
@@ -32,8 +33,9 @@ subblock_t *parse_subblocks(program_t *program, block_t *block, unsigned int off
 		for (unsigned int j = 0; j < NB_PATTERN; ++j) {
 			if (strncmp(program->instructions[i], patterns[j].label, strlen(patterns[j].label)) == 0) {
 				subblock->size = i - subblock->offset;
-				//LOG("i in subblock loop %d\n", i);
-				return (patterns[j].action(program, block, subblock));
+				result = patterns[j].action(program, block, subblock);
+				push_old_path(&block->old_paths, offset, result);
+				return (result);
 			}
 		}
 	}
@@ -50,6 +52,7 @@ int parser(program_t *program) {
 		LOG("Block offset %d and block size %d\n",block->offset, block->size);
 		extract_labels_block(program, block);
 		block->subblocks = parse_subblocks(program, block, block->offset, block->offset + block->size);
+		optimize_tree(block, block->subblocks);
 	}
 	return (0);
 }

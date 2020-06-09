@@ -7,7 +7,7 @@
 
 #include "control_flow.h"
 
-#define NB_PATTERN 3
+#define NB_PATTERN 2
 
 typedef struct      pattern_s {
 	const char      *label;

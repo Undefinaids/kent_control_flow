@@ -2,6 +2,8 @@
 
 School project in order to draw a dot diagram from generated pseudo asm instructions.
 
+After reviewing my own code, I found some parts are not nicely done, however this version of the project is more like a PoC and will not be updated anymore.
+
 It takes as input a text file that contains pseudo asm instructions (Text files located in input_files directory is a sample of pseudo asm instructions given by my supervisor).
 
 This school project does not show an innovative way to do something, the innovative part is the way the pseudo asm is generated (not my part).
